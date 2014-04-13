@@ -1,10 +1,12 @@
 <?php
+
 /**
  * completed for google jam 2014
- * problem b: cookie clicker
+ * problem c: minesweeper master
  * Author: Henry Hellbusch hhellbusch@gmail.com
  */
-include ('CookieClickerSolver.php');
+
+include_once ('MinesweeperOneClickSolver.php');
 
 function main($args)
 {
@@ -19,21 +21,27 @@ function main($args)
 		echo 'File ' . $file . ' does not exist.';
 		return;
 	}
-	//get the input and run it
 	$input = file_get_contents($file);
 	$lines = explode("\n", $input);
+	//parse the input
 	$numCases = array_shift($lines);
-	
+	$scenarios = array();
 	for ($i = 0; $i < $numCases; $i++)
 	{
 		$input = explode(" ", $lines[$i]);
-		$scenario = new CookieClickerSolver();
-		$scenario->setCostOfFarm($input[0]);
-		$scenario->setFarmRate($input[1]);
-		$scenario->setGoal($input[2]);
+		$numMines = $input[2];
+		$numCols = $input[1];
+		$numRows = $input[0];
+		$scenario = new MinesweeperOneClickSolver($numMines, $numRows, $numCols);
 		$caseNum = $i + 1;
-		echo "Case #{$caseNum}: {$scenario->getTimeToReachGoal()}\n";
+
+		echo "Case #{$caseNum}:\n";
+		$scenario->solveWithOneClick();
 	}
+	
+
+	//create a solver
+	//solve
 }
 
 array_shift($argv);
