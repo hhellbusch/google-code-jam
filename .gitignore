@@ -216,3 +216,5 @@ pip-log.txt
 
 vendor/
 input/
+composer.lock
+test-coverage-report/
