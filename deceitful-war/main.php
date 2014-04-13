@@ -51,7 +51,7 @@ function main($args)
 	foreach ($scenarios as $game) 
 	{
 		//play the game
-		$
+		
 	}
 }
 
