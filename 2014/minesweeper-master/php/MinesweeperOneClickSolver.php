@@ -10,49 +10,109 @@ include_once('MinesweeperBoard.php');
 
 class MinesweeperOneClickSolver
 {
-	private $board;
+	private $boards = array();
 
-	public function __construct($numMines, $numRows, $numCols)
+	public function __construct($numMines, $numCols, $numRows)
 	{
-		$this->board = new MinesweeperBoard($numRows, $numCols);
-		
 		//can fill the board in any manner we want 
 		//$this->spiralFill($numRows, $numCols,$numMines);
-		$this->buildBoards();
+		echo "building boards....\n";
+		$this->naiveBuildBoards($numCols, $numRows, $numMines);
 		
-		if ($numMines != $this->board->getMineCount())
+		foreach ($this->boards as $board) 
 		{
-			throw new Exception("failed to init the board properly");
+			if ($numMines != $board->getMineCount())
+			{
+				throw new Exception("failed to init the board properly");
+			}
 		}
-	}
-
-	private function buildBoards($numRows, $numCols, $numMines)
-	{
 		
 	}
 
-	// private function smartFill($numRows, $numCols, $numMines)
-	// {
-	// 	$minesPlaced = 0;
-	// 	$x = 0;
-	// 	$y = 0;
-	// 	while ($minesPlaced < $numMines)
-	// 	{
-	// 		//completely fill the row if possible
-	// 		if ($numMines - $minesPlaced > $)
-	// 		{
-	// 			$this->board->setMineAt($x, $y);
-	// 			$minesPlaced++;
-	// 			$x++;
-	// 		}
-			
+	private function naiveBuildBoards($numCols, $numRows, $numMines)
+	{
+		$k = $numMines;
+		$n = ($numRows * $numCols);
+		
+		$combinations = function($n, $k){
+			$bcfact = function($in){
+				// 0! = 1! = 1
+				$out = 1;
 
-			
-	// 	}
-	// }
+				// Only if $in is >= 2
+				for ($i = 2; $i <= $in; $i++) {
+					$out = bcmul($out, $i);
+				}
+				return $out;
+			};
+			return $bcfact($n) / ($bcfact(($n - $k)) * $bcfact($k));
+		};
+
+		$numPossibleBoards = $combinations($n, $k);
+		echo "possible number of boards: " . $numPossibleBoards . "\n";
+
+		$oneDimBoards = array();
+		$max = pow(2,$n);
+		$ones = "";
+		for ($i = 0; $i < $numMines; $i++)
+		{
+			$ones .= "1";
+		}
+		for ($i = 0; $i < $max; $i++)
+		{
+			$value = str_split(decbin ($i));
+			$arrayCountValues = array_count_values($value);
+			if (
+				isset($arrayCountValues[1]) && $arrayCountValues[1] != $numMines
+				|| ! isset($arrayCountValues[1])
+			){
+				continue;
+			}
+
+			while (count($value) < $n) {
+				array_unshift($value, 0);
+			}
+
+			$oneDimBoards[] = $value;
+			//a little bit of smartness to stop computing possible boards
+			if (strpos($ones, implode($value)) == 0) {
+				break;
+			}
+		}
+		
+		$boards = array();
+		
+		foreach ($oneDimBoards as $key=>$board) 
+		{
+			$boardObj = new MinesweeperBoard($numCols, $numRows);
+			$x = 0;
+			$y = 0;
+			foreach ($board as $index => $tile) 
+			{
+				if ($tile == 1) 
+				{
+					$boardObj->setMineAt($x, $y);
+				}
+				$x++;
+				if ($x >= $numCols)
+				{
+					$x = 0;
+					$y++;
+				}
+			}
+		}
+		// if (count($oneDimBoards) != $numPossibleBoards)
+		// {
+		// 	throw new Exception("didn't make enough boards?");
+		// }
+		return $boards;
+	}
+
+
+
 
 	//doesn't work 100% of time
-	private function spiralFill($numRows, $numCols, $numMines)
+	private function spiralFill($numCols, $numRows, $numMines)
 	{
 		$spiralCount = 0;
 		$x = 0;
@@ -102,6 +162,7 @@ class MinesweeperOneClickSolver
 	public function solveWithOneClick()
 	{
 		$solved = false;
+		echo "checking " . count($this->boards) . "\n";
 		foreach ($this->boards as $board) 
 		{
 			$possibleClickSolutions = $board->getCoordsWithNoMinedNeighbors();

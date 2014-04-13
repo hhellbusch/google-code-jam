@@ -1,0 +1,25 @@
+<phpunit
+				 colors="TRUE"
+				 processUncoveredFilesFromWhitelist="true"
+				 convertErrorsToExceptions="true"
+				 convertNoticesToExceptions="true"
+				 convertWarningsToExceptions="true"
+				 forceCoversAnnotation="false"
+				 stopOnError="TRUE"
+				 stopOnFailure="TRUE"
+				 stopOnIncomplete="false"
+				 stopOnSkipped="false"
+				 strict="false"
+				 verbose="TRUE" >
+
+	<testsuites>
+		<testsuite name="minesweeper">
+			<directory>tests</directory>
+		</testsuite>
+	</testsuites>
+
+
+	<logging>
+		<log type="coverage-html" target="./test-coverage-report" charset="UTF-8" />
+	</logging>
+</phpunit>

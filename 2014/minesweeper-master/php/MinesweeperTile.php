@@ -12,6 +12,7 @@ class MinesweeperTile
 	private $clicked = false;
 	private $flipped = false;
 	private $text;
+	private $showNumNeighbors = true;
 
 	public function hasMine()
 	{
@@ -28,28 +29,22 @@ class MinesweeperTile
 		return $this->clicked;
 	}
 
-	public function display()
+	public function __toString()
 	{
-		if ( ! is_null($this->text)) 
+		$str = '.';
+		if ( ! is_null($this->text) && $showNumNeighbors && $this->hasBeenFlipped()) 
 		{
-			echo $this->text;
+			$str = $this->text;
 		}
 		elseif ($this->hasMine())
 		{
-			echo '*';
+			$str = '*';
 		}
 		elseif($this->hasBeenClicked())
 		{
-			echo 'c';
+			$str = 'c';
 		}
-		elseif($this->hasBeenFlipped())
-		{
-			echo '.';
-		}
-		else
-		{
-			echo '.';
-		}
+		return $str;
 	}
 
 	public function hasBeenFlipped()
@@ -59,7 +54,7 @@ class MinesweeperTile
 
 	public function flip($numMinesNearby)
 	{
-		//$this->text = $numMinesNearby;
+		$this->text = $numMinesNearby;
 		$this->flipped = true;
 	}
 

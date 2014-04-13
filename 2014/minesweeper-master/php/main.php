@@ -32,7 +32,7 @@ function main($args)
 		$numMines = $input[2];
 		$numCols = $input[1];
 		$numRows = $input[0];
-		$scenario = new MinesweeperOneClickSolver($numMines, $numRows, $numCols);
+		$scenario = new MinesweeperOneClickSolver($numMines, $numCols, $numRows);
 		$caseNum = $i + 1;
 
 		echo "Case #{$caseNum}:\n";

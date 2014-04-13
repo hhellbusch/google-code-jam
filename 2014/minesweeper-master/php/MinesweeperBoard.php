@@ -15,7 +15,7 @@ class MinesweeperBoard
 	private $numCols;
 	private $mineCount = 0;
 
-	public function __construct($rows, $cols)
+	public function __construct($cols, $rows)
 	{
 		$this->numRows = $rows;
 		$this->numCols = $cols;
@@ -41,21 +41,29 @@ class MinesweeperBoard
 		}
 	}
 
-	public function display()
+	public function __toString()
 	{
+		$str = "";
 		for ($y = 0; $y < $this->numRows; $y++)
 		{
 			for ($x = 0; $x < $this->numCols; $x++)
 			{
-				$this->board[$x][$y]->display();
+				$str .= $this->board[$x][$y]->__toString();
 			}
-			echo "\n";
+			$str .= "\n";
 		}
+		return $str;
+	}
+
+	public function getBoardDataStructure()
+	{
+		return $this->board;
 	}
 
 	public function setMineAt($x, $y)
 	{
 		$this->checkIfValidLocation($x, $y);
+
 		if ($this->board[$x][$y]->hasMine()) {
 			throw new Exception("there's already a mine at ({$x}, {$y})");
 		}
@@ -189,6 +197,8 @@ class MinesweeperBoard
 		if ($y > $this->numRows|| $y < 0) {
 			throw new InvalidArgumentException("y value of $y out of bounds. num cols: {$this->numRows}");
 		}
+		if ( ! isset($this->board[$x])) throw new Exception("({$x},m) doesn't exist on the board???");
+		if ( ! isset($this->board[$x][$y])) throw new Exception("({$x},{$y}) doesn't exist on the board???");
 	}
 
 	public function isSolved()
